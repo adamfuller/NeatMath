@@ -1,4 +1,6 @@
+
 /**
+ *  0.0.5   12/13/2018  Added Curve class with value(double) value(int) derivative and toString methods
  *  0.0.4   12/13/2018  Added NoSolutionException
  *  0.0.3   12/13/2018  Added pointOfIntersection2D methods based on 4 points and 2 points and 2 vectors
  *  0.0.2   12/13/2018  Added Point and Vector Class
@@ -53,8 +55,8 @@ public class AdamMath {
     }
 
     /*
-     * finds and returns the closest point between a point and a line segment in
-     * the format {pointX, pointY}
+     * finds and returns the closest point between a point and a line segment in the
+     * format {pointX, pointY}
      */
     public double[] closestPoint2D(double lineX1, double lineY1, double lineX2, double lineY2, double pointX,
             double pointY) {
@@ -77,9 +79,10 @@ public class AdamMath {
     }
 
     /**
-     * Returns a point of intersection from vectors from points a to b and c to d.<p>
-     * Points a and b are reversable without affecting the outcome as well as c and d.
-     * Returns null if the points are parallel
+     * Returns a point of intersection from vectors from points a to b and c to d.
+     * <p>
+     * Points a and b are reversable without affecting the outcome as well as c and
+     * d. Returns null if the points are parallel
      * 
      * @param a first point
      * @param b second point
@@ -92,7 +95,7 @@ public class AdamMath {
         Vector ab = new Vector(a, b);
         Vector cd = new Vector(c, d);
 
-        if (ab.equals(cd)){ // vectors are the same so a->b and c->d are parallel
+        if (ab.equals(cd)) { // vectors are the same so a->b and c->d are parallel
             throw new NoSolutionException("Input points produce parallel vectors");
         }
 
@@ -103,22 +106,26 @@ public class AdamMath {
     }
 
     /**
-     * Returns the point of intersection based on
-     * vectors aVec and bVec that correlate with points a and b respectively.<p>
-     * @param a point aVec originates from
-     * @param b point bVec originates from
+     * Returns the point of intersection based on vectors aVec and bVec that
+     * correlate with points a and b respectively.
+     * <p>
+     * 
+     * @param a    point aVec originates from
+     * @param b    point bVec originates from
      * @param aVec direction of ray from point a
      * @param bVec direction of ray from point b
      * @return {@code Point} object of intersection or {@code null} if parallel
-     * @throws NoSolutionException if the Vectors are parallel or rays don't intersect
+     * @throws NoSolutionException if the Vectors are parallel or rays don't
+     *                             intersect
      */
-    public Point pointOfIntersect2D(Point a, Point b, Vector aVec, Vector bVec) throws NoSolutionException{
-        if (aVec.equals(bVec)){ // vectors are the same so rays are parallel
+    public Point pointOfIntersect2D(Point a, Point b, Vector aVec, Vector bVec) throws NoSolutionException {
+        if (aVec.equals(bVec)) { // vectors are the same so rays are parallel
             throw new NoSolutionException("Input vectors are parallel");
         }
 
         // Following only valid assuming they intersect
-        double xInt = ((a.y - a.x * (aVec.y / aVec.x)) - (b.y - b.x * (bVec.y / bVec.x))) / ((bVec.y / bVec.x) - (aVec.y / aVec.x));
+        double xInt = ((a.y - a.x * (aVec.y / aVec.x)) - (b.y - b.x * (bVec.y / bVec.x)))
+                / ((bVec.y / bVec.x) - (aVec.y / aVec.x));
         double yInt = xInt * (bVec.y / bVec.x) + (b.y - b.x * (bVec.y / bVec.x));
 
         Point intPoint = new Point(xInt, yInt);
@@ -126,7 +133,8 @@ public class AdamMath {
         // unit vector of a->intPoint should equal unit vector of aVec
         // and unit vector of b->intPoint should equal unit vector of bVec
         // if the rays never intersect throw an exception
-        if (!(aVec.unit().equals(new Vector(a, intPoint).unit()) && bVec.unit().equals(new Vector(b, intPoint).unit()) )){
+        if (!(aVec.unit().equals(new Vector(a, intPoint).unit())
+                && bVec.unit().equals(new Vector(b, intPoint).unit()))) {
             throw new NoSolutionException("Vectors never intersect");
         }
 
@@ -352,19 +360,11 @@ public class AdamMath {
     }
 
     public static void main(String[] args) {
-        Point a = new Point(10, 9);
-        Point c = new Point(4, 7);
-        Vector ab = new Vector(-5, -6);
-        Vector cd = new Vector(8, -2);
+        Curve c = new Curve(new double[] { 1, 1 });
+        System.out.println(c.unit(1.0).toString());
+        System.out.println(c.toString());
+        System.out.println(c.derivative().toString());
 
-        try{
-            Point intersectionPoint = new AdamMath().pointOfIntersect2D(a, c, ab, cd);
-            System.out.println("X: " + intersectionPoint.x);
-            System.out.println("Y: " + intersectionPoint.y);
-        } catch (Exception e){
-            e.printStackTrace();
-        }
-        
     }
 
     public static class Point {
@@ -375,7 +375,7 @@ public class AdamMath {
             this.y = y;
         }
 
-        public Point (int x, int y){
+        public Point(int x, int y) {
             this.x = (double) x;
             this.y = (double) y;
         }
@@ -386,35 +386,45 @@ public class AdamMath {
         public double x, y;
 
         @Override
-        public boolean equals(Object otherVector){
-            if (otherVector.getClass() != Vector.class){
+        public boolean equals(Object otherVector) {
+            if (otherVector.getClass() != Vector.class) {
                 return false;
-            } 
+            }
             Vector otherVector_ = (Vector) otherVector;
-            if ( Math.abs(this.x - otherVector_.x)< 0.000000001){
-                if (Math.abs(this.y - otherVector_.y)< 0.000000001){
+            if (Math.abs(this.x - otherVector_.x) < 0.000000001) {
+                if (Math.abs(this.y - otherVector_.y) < 0.000000001) {
                     return true;
                 }
             }
             return false;
         }
 
+        @Override
+        public String toString(){
+            String result = "";
+            result+=String.valueOf(this.x) + "x";
+            result+= (this.y>0?"+":"")+String.valueOf(this.y)+"y";
+            return result;
+        }
+
         /**
          * Create new Vector object from integer x and y values
+         * 
          * @param x
          * @param y
          */
-        public Vector(int x, int y){
+        public Vector(int x, int y) {
             this.x = (double) x;
             this.y = (double) y;
         }
 
         /**
          * Create new Vector object from double x and y values
+         * 
          * @param x
          * @param y
          */
-        public Vector(double x, double y){
+        public Vector(double x, double y) {
             this.x = x;
             this.y = y;
         }
@@ -430,17 +440,105 @@ public class AdamMath {
             this.y = b.y - a.y;
         }
 
-        public Vector unit(){
-            double mag = Math.sqrt(this.x*this.x+this.y*this.y);
-            return new Vector((this.x/mag), (this.y/mag));
+        public Vector unit() {
+            double mag = Math.sqrt(this.x * this.x + this.y * this.y);
+            return new Vector((this.x / mag), (this.y / mag));
+        }
+    }
+
+    public static class Curve {
+        private double coeff[]; // coefficients of the curve {1,2,3} = 3x^2+2x+1
+
+        public Curve(double coeff[]) {
+            this.coeff = coeff;
+        }
+
+        public Curve(String equation){
+            
+        }
+
+        @Override
+        public String toString(){
+            StringBuilder equation = new StringBuilder();
+
+            for (int power = 0; power<this.coeff.length; power++){
+                if (this.coeff[power] > 0){
+                    if (equation.length() != 0){
+                        equation.append("+");
+                    }
+                    equation.append(this.coeff[power]);
+                    if (power >= 1 ){
+                        equation.append("x");
+                        if (power > 1){
+                            equation.append("^");
+                            equation.append(power);
+                        }
+                    }
+                } else if (this.coeff[power] < 0){
+                    equation.append(this.coeff[power]);
+                    equation.append("x^");
+                    equation.append(power);
+                }
+            }
+
+            return equation.toString();
+        }
+
+        /**
+         * Gets the value of the curve at {@code x}
+         * @param x - independent variable of the curve
+         * @return {@code double} value at the input value
+         */
+        public double value(double x) {
+            double val = 0.0;
+            for (int power = 0; power < this.coeff.length; power++) {
+                val += this.coeff[power] * AdamMath.power(x, power);
+            }
+            return val;
+        }
+
+        /**
+         * Gets the value of the curve at {@code x}
+         * @param x - independent variable of the curve
+         * @return {@code double} value at the input value
+         */
+        public double value(int x) {
+            double val = 0.0;
+            for (int power = 0; power < this.coeff.length; power++) {
+                val += this.coeff[power] * AdamMath.power(x, power);
+            }
+            return val;
+        }
+
+        /**
+         * Creates a curve of the derivative of this curve
+         * @return Curve that is the derivative of this curve
+         */
+        public Curve derivative(){
+            if (this.coeff.length == 1){
+                return new Curve(new double[]{0.0});
+            }
+            double newCoeff[] = new double[this.coeff.length-1];
+
+            for (int power = 1; power < coeff.length; power++){
+                newCoeff[power-1] = this.coeff[power]*power;
+            }
+
+            return new Curve(newCoeff);
+        }
+
+        public Vector unit(double x){
+            double y = this.derivative().value(x);
+            double mag = Math.sqrt(x*x+y*y);
+            return new Vector(x/mag, y/mag);
         }
     }
 
     /**
      * Exception when inputs produce no solution for the chosen function
      */
-    private class NoSolutionException extends Exception{
-        public NoSolutionException(String message){
+    private class NoSolutionException extends Exception {
+        public NoSolutionException(String message) {
             super(message);
         }
     }
