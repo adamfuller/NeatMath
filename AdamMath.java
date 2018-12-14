@@ -360,10 +360,10 @@ public class AdamMath {
     }
 
     public static void main(String[] args) {
-        Curve c = new Curve(new double[] { 1, 1 });
+        Curve c = new Curve(new double[] { 1, -2, 1 });
+
         System.out.println(c.unit(1.0).toString());
         System.out.println(c.toString());
-        System.out.println(c.derivative().toString());
 
     }
 
@@ -461,7 +461,7 @@ public class AdamMath {
         public String toString(){
             StringBuilder equation = new StringBuilder();
 
-            for (int power = 0; power<this.coeff.length; power++){
+            for (int power = this.coeff.length-1; power>=0; power--){
                 if (this.coeff[power] > 0){
                     if (equation.length() != 0){
                         equation.append("+");
@@ -476,8 +476,14 @@ public class AdamMath {
                     }
                 } else if (this.coeff[power] < 0){
                     equation.append(this.coeff[power]);
-                    equation.append("x^");
-                    equation.append(power);
+                    if (power >= 1){
+                        equation.append("x");
+                        if (power > 1){
+                            equation.append("^");
+                            equation.append(power);
+                        }
+                    }
+
                 }
             }
 
@@ -527,10 +533,20 @@ public class AdamMath {
             return new Curve(newCoeff);
         }
 
+        /**
+         * Returns the tangent unit vector at x on this curve
+         * <p>
+         * The vector is pointing from left to right (-x to +x) if applicable
+         * @param x - position of the tangent vector
+         * @return {@code Vector} object tangent to this curve at {@code x}
+         */
         public Vector unit(double x){
-            double y = this.derivative().value(x);
-            double mag = Math.sqrt(x*x+y*y);
-            return new Vector(x/mag, y/mag);
+            Curve dCurve = this.derivative();
+            double slope = dCurve.value(x);
+
+            double mag = Math.sqrt(1+slope*slope);
+
+            return new Vector(1/mag, slope/mag);
         }
     }
 
