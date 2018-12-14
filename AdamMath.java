@@ -1,5 +1,5 @@
-
 /**
+ *  0.0.8   12/13/2018  added pointOfIntersectTime
  *  0.0.7   12/13/2018  z component added to Point and Vector class as well as toString changes
  *  0.0.6   12/13/2018  fixed unit(double) method in Curve class
  *  0.0.5   12/13/2018  Added Curve class with value(double) value(int) derivative and toString methods
@@ -94,7 +94,7 @@ public class AdamMath {
      * @return {@code Point} object of the intersection point
      * @throws NoSolutionException if the points produce parallel vectors
      */
-    public Point pointOfIntersect2D(Point a, Point b, Point c, Point d) throws NoSolutionException {
+    public static Point pointOfIntersect2D(Point a, Point b, Point c, Point d) throws NoSolutionException {
         Vector ab = new Vector(a, b);
         Vector cd = new Vector(c, d);
 
@@ -121,7 +121,7 @@ public class AdamMath {
      * @throws NoSolutionException if the Vectors are parallel or rays don't
      *                             intersect
      */
-    public Point pointOfIntersect2D(Point a, Point b, Vector aVec, Vector bVec) throws NoSolutionException {
+    public static Point pointOfIntersect2D(Point a, Point b, Vector aVec, Vector bVec) throws NoSolutionException {
         if (aVec.equals(bVec)) { // vectors are the same so rays are parallel
             throw new NoSolutionException("Input vectors are parallel");
         }
@@ -155,8 +155,20 @@ public class AdamMath {
      * @return
      * @throws NoSolutionException
      */
-    public Point pointOfIntersectTime(Point a, Point b, Vector aVec, Vector bVec) throws NoSolutionException {
-        return null;
+    public static Point pointOfIntersectTime(Point a, Point b, Vector aVec, Vector bVec) throws NoSolutionException {
+        Point intPoint = AdamMath.pointOfIntersect2D(a, b, aVec, bVec); // if they don't intersect this will throw NoSolutionException
+        Vector aToInt = new Vector(a, intPoint); // vector distance between a and intersection point
+        Vector bToInt = new Vector(b, intPoint); // vector distance between b and intersection point
+        double timeToIntA = aToInt.magnitude()/aVec.magnitude(); // time for a to get to int dist/vel = time
+        double timeToIntB = bToInt.magnitude()/bVec.magnitude(); // time for b to get to int dist/vel = time
+        System.out.println("Time to int A: " + timeToIntA);
+        System.out.println("Time to int B: " + timeToIntB);
+        if (AdamMath.abs(timeToIntA-timeToIntB) < 0.0000001){
+            return intPoint;
+        } else {
+            throw new NoSolutionException("a will not collide with b based on their given velocities");
+        }
+
     }
 
     /*
@@ -378,10 +390,16 @@ public class AdamMath {
     }
 
     public static void main(String[] args) {
-        Curve c = new Curve(new double[] { 1, -2, 1 });
+        Point a = new Point(0,0);
+        Point b = new Point(1,0);
+        Vector aVec = new Vector(8,8);
+        Vector bVec = new Vector(-8,8);
 
-        System.out.println(c.unit(1.0).toString());
-        System.out.println(c.toString());
+        try{
+            System.out.println(AdamMath.pointOfIntersectTime(a, b, aVec, bVec).toString());
+        } catch (Exception e){
+            e.printStackTrace();
+        }
 
     }
 
@@ -475,6 +493,13 @@ public class AdamMath {
         public Vector unit() {
             double mag = Math.sqrt(this.x * this.x + this.y * this.y);
             return new Vector((this.x / mag), (this.y / mag));
+        }
+
+        public double magnitude(){
+            if (Double.isNaN(this.z)){
+                return Math.sqrt(this.x*this.x+this.y*this.y);
+            }
+            return Math.sqrt(this.x*this.x+this.y*this.y+this.z*this.z);
         }
     }
 
@@ -589,7 +614,7 @@ public class AdamMath {
     /**
      * Exception when inputs produce no solution for the chosen function
      */
-    private class NoSolutionException extends Exception {
+    private static class NoSolutionException extends Exception {
         public NoSolutionException(String message) {
             super(message);
         }
