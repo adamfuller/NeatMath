@@ -144,7 +144,9 @@ public class AdamMath {
         return intPoint;
     }
 
-    /** TBD
+    /**
+     * Return the point of intersection of objects at points a and b traveling with
+     * velocities of vectors aVec and bVec respectively
      * 
      * @param a
      * @param b
@@ -398,7 +400,10 @@ public class AdamMath {
 
         @Override
         public String toString() {
-            return "(" + this.x + "," + this.y + "," + this.z + ")";
+            if (!Double.isNaN(this.z)) {
+                return "(" + this.x + "," + this.y + "," + this.z + ")";
+            }
+            return "(" + this.x + "," + this.y + ")";
         }
 
     }
@@ -440,6 +445,7 @@ public class AdamMath {
         public Vector(int x, int y) {
             this.x = (double) x;
             this.y = (double) y;
+            this.z = Double.NaN;
         }
 
         /**
@@ -451,6 +457,7 @@ public class AdamMath {
         public Vector(double x, double y) {
             this.x = x;
             this.y = y;
+            this.z = Double.NaN;
         }
 
         /**
@@ -462,6 +469,7 @@ public class AdamMath {
         public Vector(Point a, Point b) {
             this.x = b.x - a.x;
             this.y = b.y - a.y;
+            this.z = b.z - a.z;
         }
 
         public Vector unit() {
