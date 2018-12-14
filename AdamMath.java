@@ -1,5 +1,7 @@
 
 /**
+ *  0.0.7   12/13/2018  z component added to Point and Vector class as well as toString changes
+ *  0.0.6   12/13/2018  fixed unit(double) method in Curve class
  *  0.0.5   12/13/2018  Added Curve class with value(double) value(int) derivative and toString methods
  *  0.0.4   12/13/2018  Added NoSolutionException
  *  0.0.3   12/13/2018  Added pointOfIntersection2D methods based on 4 points and 2 points and 2 vectors
@@ -12,6 +14,7 @@ import java.awt.Color;
  * Class containing cool math tools I have needed
  */
 public class AdamMath {
+
     /*
      * Returns the distance between two x,y coordinates
      */
@@ -139,6 +142,19 @@ public class AdamMath {
         }
 
         return intPoint;
+    }
+
+    /** TBD
+     * 
+     * @param a
+     * @param b
+     * @param aVec
+     * @param bVec
+     * @return
+     * @throws NoSolutionException
+     */
+    public Point pointOfIntersectTime(Point a, Point b, Vector aVec, Vector bVec) throws NoSolutionException {
+        return null;
     }
 
     /*
@@ -368,7 +384,7 @@ public class AdamMath {
     }
 
     public static class Point {
-        public double x, y;
+        public double x, y, z;
 
         public Point(double x, double y) {
             this.x = x;
@@ -380,10 +396,15 @@ public class AdamMath {
             this.y = (double) y;
         }
 
+        @Override
+        public String toString() {
+            return "(" + this.x + "," + this.y + "," + this.z + ")";
+        }
+
     }
 
     public static class Vector {
-        public double x, y;
+        public double x, y, z;
 
         @Override
         public boolean equals(Object otherVector) {
@@ -400,10 +421,13 @@ public class AdamMath {
         }
 
         @Override
-        public String toString(){
+        public String toString() {
             String result = "";
-            result+=String.valueOf(this.x) + "x";
-            result+= (this.y>0?"+":"")+String.valueOf(this.y)+"y";
+            result += String.valueOf(this.x) + "x";
+            result += (this.y > 0 ? "+" : "") + String.valueOf(this.y) + "y";
+            if (!Double.isNaN(this.z)) {
+                result += (this.z > 0 ? "+" : "") + String.valueOf(this.z) + "z";
+            }
             return result;
         }
 
@@ -453,32 +477,32 @@ public class AdamMath {
             this.coeff = coeff;
         }
 
-        public Curve(String equation){
-            
+        public Curve(String equation) {
+
         }
 
         @Override
-        public String toString(){
+        public String toString() {
             StringBuilder equation = new StringBuilder();
 
-            for (int power = this.coeff.length-1; power>=0; power--){
-                if (this.coeff[power] > 0){
-                    if (equation.length() != 0){
+            for (int power = this.coeff.length - 1; power >= 0; power--) {
+                if (this.coeff[power] > 0) {
+                    if (equation.length() != 0) {
                         equation.append("+");
                     }
                     equation.append(this.coeff[power]);
-                    if (power >= 1 ){
+                    if (power >= 1) {
                         equation.append("x");
-                        if (power > 1){
+                        if (power > 1) {
                             equation.append("^");
                             equation.append(power);
                         }
                     }
-                } else if (this.coeff[power] < 0){
+                } else if (this.coeff[power] < 0) {
                     equation.append(this.coeff[power]);
-                    if (power >= 1){
+                    if (power >= 1) {
                         equation.append("x");
-                        if (power > 1){
+                        if (power > 1) {
                             equation.append("^");
                             equation.append(power);
                         }
@@ -492,6 +516,7 @@ public class AdamMath {
 
         /**
          * Gets the value of the curve at {@code x}
+         * 
          * @param x - independent variable of the curve
          * @return {@code double} value at the input value
          */
@@ -505,6 +530,7 @@ public class AdamMath {
 
         /**
          * Gets the value of the curve at {@code x}
+         * 
          * @param x - independent variable of the curve
          * @return {@code double} value at the input value
          */
@@ -518,16 +544,17 @@ public class AdamMath {
 
         /**
          * Creates a curve of the derivative of this curve
+         * 
          * @return Curve that is the derivative of this curve
          */
-        public Curve derivative(){
-            if (this.coeff.length == 1){
-                return new Curve(new double[]{0.0});
+        public Curve derivative() {
+            if (this.coeff.length == 1) {
+                return new Curve(new double[] { 0.0 });
             }
-            double newCoeff[] = new double[this.coeff.length-1];
+            double newCoeff[] = new double[this.coeff.length - 1];
 
-            for (int power = 1; power < coeff.length; power++){
-                newCoeff[power-1] = this.coeff[power]*power;
+            for (int power = 1; power < coeff.length; power++) {
+                newCoeff[power - 1] = this.coeff[power] * power;
             }
 
             return new Curve(newCoeff);
@@ -537,16 +564,17 @@ public class AdamMath {
          * Returns the tangent unit vector at x on this curve
          * <p>
          * The vector is pointing from left to right (-x to +x) if applicable
+         * 
          * @param x - position of the tangent vector
          * @return {@code Vector} object tangent to this curve at {@code x}
          */
-        public Vector unit(double x){
+        public Vector unit(double x) {
             Curve dCurve = this.derivative();
             double slope = dCurve.value(x);
 
-            double mag = Math.sqrt(1+slope*slope);
+            double mag = Math.sqrt(1 + slope * slope);
 
-            return new Vector(1/mag, slope/mag);
+            return new Vector(1 / mag, slope / mag);
         }
     }
 
