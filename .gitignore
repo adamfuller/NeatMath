@@ -24,3 +24,7 @@ hs_err_pid*
 
 #annoying Mac thing
 .DS_Store
+
+# C files
+*.o
+*.out
